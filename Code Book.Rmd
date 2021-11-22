@@ -1,0 +1,61 @@
+---
+title: "Code Book"
+author: "Manuel M."
+date: "22/11/2021"
+output: html_document
+---
+
+The `run_analysis.R` script performs the data preparation and then followed by the 5 steps required as described in the course project’s definition.
+
+### **Download the data set**
+- Dataset downloaded and extracted under the folder called `UCI HAR Dataset`.
+
+### **Assign each data to variables**
+- `caracteristicas <- features.txt` : 561 rows, 2 columns. *The features selected for this database come from the accelerometer and gyroscope 3-axial raw signals tAcc-XYZ and tGyro-XYZ.*
+- `actividades <- activity_labels.txt` : 6 rows, 2 columns.
+*List of activities performed when the corresponding measurements were taken and its codes (labels).*
+- `sujetos_Prueba <- test/subject_test.txt` : 2947 rows, 1 column.
+*Contains test data of 9/30 volunteer test subjects being observed.*
+- `prueba_x <- test/X_test.txt` : 2947 rows, 561 columns.
+*Contains recorded features test data.*
+- `prueba_y <- test/y_test.txt` : 2947 rows, 1 columns.
+*Contains test data of activities’code labels.*
+- `sujeto_entrenamiento <- test/subject_train.txt` : 7352 rows, 1 column.
+*Contains train data of 21/30 volunteer subjects being observed.*
+- `entrenamiento_x <- test/X_train.txt` : 7352 rows, 561 columns.
+*Contains recorded features train data.*
+- `entrenamiento_y <- test/y_train.txt` : 7352 rows, 1 columns.
+*Contains train data of activities’code labels.*
+
+## **Steps**
+
+### **1. Merges the training and the test sets to create one data set**
+
+- `X` (10299 rows, 561 columns) is created by merging `entrenamiento_x` and `prueba_x` using **rbind()** function.
+- `Y` (10299 rows, 1 column) is created by merging `entrenamiento_y` and `prueba_y` using **rbind()** function.
+- `Sujeto` (10299 rows, 1 column) is created by merging `sujeto_entrenamiento` and `sujetos_prueba` using **rbind()** function.
+- `datos_fusionados` (10299 rows, 563 column) is created by merging `Sujeto`, `Y` and `X` using **cbind()** function.
+
+### **2. Extracts only the measurements on the mean and standard deviation for each measurement**
+
+- `DatosOrdenados` (10299 rows, 88 columns) is created by subsetting `datos_fusionados`, selecting only columns: `subject`, `code` and the measurements on the mean and standard deviation (std) for each measurement.
+
+### **3. Uses descriptive activity names to name the activities in the data set**
+
+Entire numbers in `code` column of the `DatosOrdenados` replaced with corresponding activity taken from second column of the `actividades` variable.
+
+### **4. Appropriately labels the data set with descriptive variable names**
+
+- `code` column in `DatosOrdenados` renamed into `actividades`.
+- All `Acc` in column’s name replaced by `Acelerómetro`.
+- All `Gyro` in column’s name replaced by `Giróscopo`.
+- All `BodyBody` in column’s name replaced by `Cuerpo`.
+- All `Mag` in column’s name replaced by `Magnitud`.
+- All start with character `f` in column’s name replaced by `Frecuencia`.
+- All start with character `t` in column’s name replaced by `Tiempo`.
+
+### **From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject**
+
+
+- `datosFinales` (180 rows, 88 columns) is created by sumarizing `DatosOrdenados` taking the means of each variable for each activity and each subject, after groupped by subject and activity.
+- Export `datosFinales` into `DatosFinales.txt` file.
